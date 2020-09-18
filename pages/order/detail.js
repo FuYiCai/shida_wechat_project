@@ -36,7 +36,6 @@ Page({
   onLoad: function (options) {
     this.data.order_id = options.order_id;
     this.getOrderDetail(options.order_id);
-    this.getLogistics(options.order_id)
   },
 
   /**
@@ -51,13 +50,12 @@ Page({
   onClosepop(){
     this.setData({ popupShow: false });
   },
-  onpenPop() {
-    this.setData({ popupShow: true });
-  },
-  getLogistics(order_id){
+  getLogistics(){
+    const order_id = this.data.order_id ;
     console.log('order_id',order_id)
     App._get('user.order/express',{order_id},(res)=>{
-      console.log(res)
+      console.log('getLogistics',res);
+      this.setData({ popupShow: true });
     })
   },
   /**

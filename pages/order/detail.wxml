@@ -22,7 +22,7 @@
       </view>
       <view class="dis-flex flow-all-list-cont">
         <text class="col-7" selectable="{{true}}">快递单号: {{order.express_no}}</text>
-        <view bindtap="onpenPop" style="margin-left:auto">查看物流</view>
+        <view bindtap="getLogistics" style="margin-left:auto">查看物流</view>
       </view>
     </view>
 
