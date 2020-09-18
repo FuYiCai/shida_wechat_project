@@ -3,7 +3,7 @@
 .user {
   position: relative;
   background: #fff;
-  margin-bottom: 150rpx;
+  margin-bottom: 145rpx;
 }
 
 .user-header {
@@ -45,6 +45,32 @@
 .user-header .user-header-cont .user-header-cont-name {
   font-size: 32rpx;
   padding: 20rpx 0;
+}
+
+/* 会员等级 */
+
+.user-header-grade {
+  background: #fff199;
+  margin-top: 12rpx;
+  height: 38rpx;
+  line-height: 38rpx;
+  border-radius: 10rpx;
+  padding: 0 14rpx;
+}
+
+/* .user-header-grade .user-grade_icon {
+  margin-top: -5rpx;
+} */
+
+.user-header-grade .user-grade_icon image {
+  display: block;
+  width: 32rpx;
+  height: 30rpx;
+}
+
+.user-header-grade .user-grade_name {
+  margin-left: 8rpx;
+  font-size: 24rpx;
 }
 
 /* 订单导航栏 */
@@ -112,6 +138,10 @@
 
 /* 菜单列表 */
 
+.menus-list {
+  margin-top: 20rpx;
+}
+
 .menus-list .menus-item {
   position: relative;
   padding: 28rpx 28rpx;
@@ -123,7 +153,51 @@
   margin-left: 20rpx;
 }
 
-.logo{
-  display: flex;
-  justify-content: center;
+/* 我的钱包 */
+
+.my-asset {
+  background: #fff;
+  /* height: 70rpx; */
+  padding: 26rpx 0;
+}
+
+.my-asset .asset-right {
+  width: 210rpx;
+  border-left: 1rpx solid #eee;
+}
+
+.asset-right_item {
+  text-align: center;
+  color: #666;
+}
+
+.asset-right_item .item-icon text {
+  font-size: 36rpx;
+}
+
+.asset-right_item .item-name {
+  margin-top: 10rpx;
+}
+
+.asset-right_item .item-name text {
+  font-size: 25rpx;
+}
+
+.asset-left_item {
+  text-align: center;
+  color: #666;
+  padding: 0 60rpx;
+}
+
+.asset-left_item .item-value text {
+  font-size: 32rpx;
+  color: red;
+}
+
+.asset-left_item .item-name {
+  margin-top: 6rpx;
+}
+
+.asset-left_item .item-name text {
+  font-size: 25rpx;
 }

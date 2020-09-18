@@ -36,7 +36,7 @@ function a(e) {
 }
 
 function r(e) {
-    return e = e.replace(/&nbsp;/g, " "), e = e.replace(/&quot;/g, "'"), e = e.replace(/&amp;/g, "&"), 
+    return e = e.replace(/&nbsp;/g, '\xa0'), e = e.replace(/&quot;/g, "'"), e = e.replace(/&amp;/g, "&"), 
     e = e.replace(/&lt;/g, "<"), e = e.replace(/&gt;/g, ">");
 }
 
@@ -61,7 +61,7 @@ function l(e) {
 }
 
 function p(e) {
-    return e = e.replace(/\r\n/g, ""), e = e.replace(/\n/g, ""), e = e.replace(/code/g, "wxxxcode-style");
+    return e = e.replace(/\r\n/g, ""), e = e.replace(/\n/g, "");
 }
 
 module.exports = {

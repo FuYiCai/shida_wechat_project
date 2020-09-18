@@ -1,100 +1,90 @@
-let App = getApp();
+const App = getApp();
 
 Page({
-  data: {
-    // banner轮播组件属性
-    indicatorDots: true, // 是否显示面板指示点	
-    autoplay: true, // 是否自动切换
-    interval: 3000, // 自动切换时间间隔
-    duration: 800, // 滑动动画时长
-    imgHeights: {}, // 图片的高度
-    imgCurrent: {}, // 当前banne所在滑块指针
 
+  data: {
+    // 页面参数
+    options: {},
     // 页面元素
     items: {},
-    newest: {},
-    best: {},
-    mybanner:[],
     scrollTop: 0,
   },
 
-  onLoad: function() {
-    // 设置页面标题
-    App.setTitle();
-    // 设置navbar标题、颜色
-    App.setNavigationBar();
-    // 获取首页数据
-    this.getIndexData();
+  /**
+   * 生命周期函数--监听页面加载
+   */
+  onLoad(options) {
+    // 当前页面参数
+    this.setData({
+      options
+    });
+    // 加载页面数据
+    this.getPageData();
   },
 
   /**
-   * 获取首页数据
+   * 加载页面数据
    */
-  getIndexData: function() {
+  getPageData(callback) {
     let _this = this;
-    App._get('index/page', {}, (result)=> {
-      result.data.mybanner =  Object.values(result.data.items).filter(item => item.type === 'banner');
+    App._get('page/index', {
+      page_id: _this.data.options.page_id || 0
+    }, result => {
+      // 设置顶部导航栏栏
+      _this.setPageBar(result.data.page);
       _this.setData(result.data);
+      // 回调函数
+      typeof callback === 'function' && callback();
     });
   },
 
   /**
-   * 计算图片高度
+   * 设置顶部导航栏
    */
-  imagesHeight: function(e) {
-    let imgId = e.target.dataset.id,
-      itemKey = e.target.dataset.itemKey,
-      ratio = e.detail.width / e.detail.height, // 宽高比
-      viewHeight = 750 / ratio, // 计算的高度值
-      imgHeights = this.data.imgHeights;
+  setPageBar(page) {
+    // 设置页面标题
+    wx.setNavigationBarTitle({
+      title: page.params.title
+    });
+    // 设置navbar标题、颜色
+    wx.setNavigationBarColor({
+      frontColor: page.style.titleTextColor === 'white' ? '#ffffff' : '#000000',
+      backgroundColor: page.style.titleBackgroundColor
+    })
+  },
 
-    // 把每一张图片的对应的高度记录到数组里
-    if (typeof imgHeights[itemKey] === 'undefined') {
-      imgHeights[itemKey] = {};
-    }
-    imgHeights[itemKey][imgId] = viewHeight;
-    // 第一种方式
-    let imgCurrent = this.data.imgCurrent;
-    if (typeof imgCurrent[itemKey] === 'undefined') {
-      imgCurrent[itemKey] = Object.keys(this.data.items[itemKey].data)[0];
-    }
-    this.setData({
-      imgHeights,
-      imgCurrent
+  /**
+   * 下拉刷新
+   */
+  onPullDownRefresh() {
+    // 获取首页数据
+    this.getPageData(function () {
+      wx.stopPullDownRefresh();
     });
   },
 
-  bindChange: function(e) {
-    let itemKey = e.target.dataset.itemKey,
-      imgCurrent = this.data.imgCurrent;
-    // imgCurrent[itemKey] = e.detail.current;
-    imgCurrent[itemKey] = e.detail.currentItemId;
-    this.setData({
-      imgCurrent
-    });
-  },
-
-  goTop: function(t) {
-    this.setData({
-      scrollTop: 0
-    });
-  },
-
-  scroll: function(t) {
-    this.setData({
-      indexSearch: t.detail.scrollTop
-    }), t.detail.scrollTop > 300 ? this.setData({
-      floorstatus: !0
-    }) : this.setData({
-      floorstatus: !1
-    });
-  },
-
-  onShareAppMessage: function() {
+  /**
+   * 分享当前页面
+   */
+  onShareAppMessage() {
+    const _this = this;
     return {
-      title: "小程序首页",
-      desc: "",
-      path: "/pages/index/index"
+      title: _this.data.page.params.share_title,
+      path: "/pages/index/index?" + App.getShareUrlParams()
+    };
+  },
+
+  /**
+   * 分享到朋友圈
+   * 本接口为 Beta 版本，暂只在 Android 平台支持，详见分享到朋友圈 (Beta)
+   * https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/share-timeline.html
+   */
+  onShareTimeline() {
+    const _this = this;
+    return {
+      title: _this.data.page.params.share_title,
+      path: "/pages/index/index?" + App.getShareUrlParams()
     };
   }
+
 });

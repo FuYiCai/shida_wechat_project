@@ -10,22 +10,20 @@ Page({
     // 列表高度
     scrollHeight: 0,
 
-    // 当前选中的分类
-    curIndex: -1,
-    curCateId: 0,
+    // 一级分类：指针
+    curNav: true,
+    curIndex: 0,
 
     // 分类列表
-    categoryList: [],
+    list: [],
 
-    // 商品列表
-    goodsList: [],
-
-    noMore: false, // 没有更多数据
-    isLoading: true, // 是否正在加载中
-    page: 1, // 当前页码
-
+    // show
+    notcont: false
   },
 
+  /**
+   * 生命周期函数--监听页面加载
+   */
   onLoad() {
     let _this = this;
     // 设置分类列表高度
@@ -34,17 +32,13 @@ Page({
     _this.getCategoryList();
   },
 
-  onShow() {
-    
-  },
-
   /**
    * 设置分类列表高度
    */
   setListHeight() {
     let _this = this;
     wx.getSystemInfo({
-      success(res) {
+      success: function(res) {
         _this.setData({
           scrollHeight: res.windowHeight - 47,
         });
@@ -53,99 +47,55 @@ Page({
   },
 
   /**
-   * 获取分类主页数据
-   * 1.所有分类列表
-   * 2.所有商品列表
+   * 获取分类列表
    */
   getCategoryList() {
     let _this = this;
     App._get('category/index', {}, result => {
       let data = result.data;
       _this.setData({
-        categoryList: data['categoryList'],
-        goodsList: data['goodsList']
+        list: data.list,
+        templet: data.templet,
+        curNav: data.list.length > 0 ? data.list[0].category_id : true,
+        notcont: !data.list.length
       });
     });
   },
 
   /**
-   * Api：获取商品列表
-   */
-  getGoodsList(isPage, pageNum) {
-    let _this = this;
-    App._get('goods/lists', {
-      page: pageNum || 1,
-      category_id: _this.data.curCateId
-    }, result => {
-      let resList = result.data.list,
-        dataList = _this.data.goodsList;
-      if (isPage == true) {
-        _this.setData({
-          'goodsList.data': dataList.data.concat(resList.data),
-          isLoading: false,
-        });
-      } else {
-        _this.setData({
-          goodsList: resList,
-          isLoading: false,
-        });
-      }
-    });
-  },
-
-  /**
-   * 跳转商品详情页
-   */
-  onTargetGoods(e) {
-    wx.navigateTo({
-      url: '../goods/index?goods_id=' + e.detail.target.dataset.id
-    });
-  },
-
-  /** 
    * 一级分类：选中分类
    */
-  onSelectNav(e) {
-    let _this = this,
-      curIndex = e.currentTarget.dataset.index;
-
-    // 第一步：设置分类选中状态
-    _this.setData({
-      curIndex,
-      curCateId: curIndex > -1 ? _this.data.categoryList[curIndex].category_id : 0,
-      goodsList: [],
-      page: 1,
-      noMore: false,
-      isLoading: true,
-    });
-    // 第二步：更新当前的商品列表
-    _this.getGoodsList();
-  },
-
-  /**
-   * 下拉到底加载数据
-   */
-  onDownLoad() {
+  selectNav(e) {
     let _this = this;
-    // 已经是最后一页
-    if (_this.data.page >= _this.data.goodsList.last_page) {
-      _this.setData({
-        noMore: true
-      });
-      return false;
-    }
-    // 加载下一页列表
-    _this.getGoodsList(true, ++_this.data.page);
+    _this.setData({
+      curNav: e.target.dataset.id,
+      curIndex: parseInt(e.target.dataset.index),
+      scrollTop: 0
+    });
   },
 
   /**
    * 设置分享内容
    */
   onShareAppMessage() {
+    const _this = this;
     return {
-      title: "全部商品",
-      path: "/pages/category/index"
+      title: _this.data.templet.share_title,
+      path: '/pages/category/index?' + App.getShareUrlParams()
     };
-  }
+  },
+
+  /**
+   * 分享到朋友圈
+   * 本接口为 Beta 版本，暂只在 Android 平台支持，详见分享到朋友圈 (Beta)
+   * https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/share-timeline.html
+   */
+  onShareTimeline() {
+    const _this = this;
+    return {
+      title: _this.data.templet.share_title,
+      path: '/pages/category/index?' + App.getShareUrlParams()
+    };
+  },
 
 });

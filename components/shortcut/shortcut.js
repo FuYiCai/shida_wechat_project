@@ -2,7 +2,7 @@ const App = getApp();
 
 Component({
   options: {
-    multipleSlots: true // 在组件定义时的选项中启用多slot支持
+    addGlobalClass: true,
   },
 
   /**
@@ -10,10 +10,13 @@ Component({
    * 用于组件自定义设置
    */
   properties: {
-    // 弹窗标题
-    title: {
+    right: {
       type: String,
-      value: '弹窗标题'
+      value: '24rpx'
+    },
+    bottom: {
+      type: String,
+      value: '250rpx'
     }
   },
 
@@ -37,6 +40,8 @@ Component({
      * 导航菜单切换事件
      */
     _onToggleShow(e) {
+      // 记录formid
+      App.saveFormId(e.detail.formId);
       this.setData({
         isShow: !this.data.isShow,
         transparent: false
@@ -48,6 +53,8 @@ Component({
      */
     _onTargetPage(e) {
       let urls = App.getTabBarLinks();
+      // 记录formid
+      App.saveFormId(e.detail.formId);
       wx.switchTab({
         url: '/' + urls[e.detail.target.dataset.index]
       });

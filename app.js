@@ -9,8 +9,11 @@ const tabBarLinks = [
   'pages/user/index'
 ];
 
-// 站点信息
-import siteInfo from 'siteinfo.js';
+// 站点配置文件
+import siteinfo from './siteinfo.js';
+
+// 工具类
+import util from './utils/util.js';
 
 App({
 
@@ -21,49 +24,91 @@ App({
     user_id: null,
   },
 
-  api_root: '', // api地址
+  // api地址
+  api_root: siteinfo.siteroot + 'index.php?s=/api/',
 
   /**
    * 生命周期函数--监听小程序初始化
    */
-  onLaunch() {
+  onLaunch(e) {
+    let _this = this;
+    // 小程序主动更新
+    _this.updateManager();
+    // 小程序启动场景
+    _this.onStartupScene(e.query);
+  },
+
+  /**
+   * 小程序启动场景
+   */
+  onStartupScene(query) {
+    // 获取场景值
+    let scene = this.getSceneData(query);
+    // 记录推荐人id
+    let refereeId = query.referee_id ? query.referee_id : scene.uid;
+    refereeId > 0 && (this.saveRefereeId(refereeId));
+  },
+
+  /**
+   * 获取商城ID
+   */
+  getWxappId() {
+    return siteinfo.uniacid || 10001;
+  },
+
+  /**
+   * 记录推荐人id
+   */
+  saveRefereeId(refereeId) {
     let App = this;
-    // 设置api地址
-    App.setApiRoot();
+    refereeId = parseInt(refereeId);
+    if (refereeId <= 0 || refereeId == App.getUserId()) {
+      return false;
+    }
+    if (wx.getStorageSync('referee_id')) {
+      return false;
+    }
+    wx.setStorageSync('referee_id', refereeId);
+    return true;
+  },
+
+  /**
+   * 获取场景值(scene)
+   */
+  getSceneData(query) {
+    return query.scene ? util.scene_decode(query.scene) : {};
   },
 
   /**
    * 当小程序启动，或从后台进入前台显示，会触发 onShow
    */
   onShow(options) {
-
-  },
-
-  /**
-   * 设置api地址
-   */
-  setApiRoot() {
     let App = this;
-    App.api_root = `${siteInfo.siteroot}index.php?s=/api/`;
-  },
+    try {
+      const livePlayer = requirePlugin('live-player-plugin');
+      if (options.scene == 1007 || options.scene == 1008 || options.scene == 1044) {
+        livePlayer.getShareParams()
+          .then(res => {
+            // 直播页面的自定义参数
+            let customParams = res.custom_params;
+            console.log('get custom params', customParams);
+            // 记录推荐人ID
+            if (customParams.hasOwnProperty('referee_id')) {
+              App.saveRefereeId(customParams['referee_id']);
+            }
+          }).catch(err => {
+            console.log('get share params', err)
+          });
+      }
+    } catch (error) {
 
-  /**
-   * 获取小程序基础信息
-   */
-  getWxappBase(callback) {
-    let App = this;
-    App._get('wxapp/base', {}, result => {
-      console.log('记录小程序基础信息',result)
-      // 记录小程序基础信息
-      wx.setStorageSync('wxapp', result.data.wxapp);
-      callback && callback(result.data.wxapp);
-    }, false, false);
+    }
   },
 
   /**
    * 执行用户登录
    */
-  doLogin() {
+  doLogin(delta) {
     // 保存当前页面
     let pages = getCurrentPages();
     if (pages.length) {
@@ -73,7 +118,7 @@ App({
     }
     // 跳转授权页面
     wx.navigateTo({
-      url: "/pages/login/login"
+      url: "/pages/login/login?delta=" + (delta || 1)
     });
   },
 
@@ -81,7 +126,7 @@ App({
    * 当前用户id
    */
   getUserId() {
-    return wx.getStorageSync('user_id') || 0;
+    return wx.getStorageSync('user_id');
   },
 
   /**
@@ -91,6 +136,8 @@ App({
     wx.showToast({
       title: msg,
       icon: 'success',
+      mask: true,
+      duration: 1500,
       success() {
         callback && (setTimeout(() => {
           callback();
@@ -120,14 +167,11 @@ App({
    * get请求
    */
   _get(url, data, success, fail, complete, check_login) {
-    let App = this;
     wx.showNavigationBarLoading();
-
+    let _this = this;
     // 构造请求参数
-    data = Object.assign({
-      wxapp_id: 10001,
-      token: wx.getStorageSync('token')
-    }, data);
+    data = data || {};
+    data.wxapp_id = _this.getWxappId();
 
     // if (typeof check_login === 'undefined')
     //   check_login = true;
@@ -136,31 +180,32 @@ App({
     let request = () => {
       data.token = wx.getStorageSync('token');
       wx.request({
-        url: App.api_root + url,
+        url: _this.api_root + url,
         header: {
           'content-type': 'application/json'
         },
-        data,
+        data: data,
         success(res) {
           if (res.statusCode !== 200 || typeof res.data !== 'object') {
             console.log(res);
-            App.showError('网络请求出错');
+            _this.showError('网络请求出错');
             return false;
           }
           if (res.data.code === -1) {
             // 登录态失效, 重新登录
             wx.hideNavigationBarLoading();
-            App.doLogin();
+            _this.doLogin(2);
           } else if (res.data.code === 0) {
-            App.showError(res.data.msg);
+            _this.showError(res.data.msg, () => {
+              fail && fail(res);
+            });
             return false;
           } else {
             success && success(res.data);
           }
         },
         fail(res) {
-          // console.log(res);
-          App.showError(res.errMsg, () => {
+          _this.showError(res.errMsg, () => {
             fail && fail(res);
           });
         },
@@ -171,40 +216,42 @@ App({
       });
     };
     // 判断是否需要验证登录
-    check_login ? App.doLogin(request) : request();
+    check_login ? _this.doLogin(request) : request();
   },
 
   /**
    * post提交
    */
-  _post_form(url, data, success, fail, complete) {
-    wx.showNavigationBarLoading();
-    let App = this;
-    // 构造请求参数
-    data = Object.assign({
-      wxapp_id: 10001,
-      token: wx.getStorageSync('token')
-    }, data);
+  _post_form(url, data, success, fail, complete, isShowNavBarLoading) {
+    let _this = this;
+
+    isShowNavBarLoading || true;
+    data.wxapp_id = _this.getWxappId();
+    data.token = wx.getStorageSync('token');
+
+    // 在当前页面显示导航条加载动画
+    if (isShowNavBarLoading == true) {
+      wx.showNavigationBarLoading();
+    }
     wx.request({
-      url: App.api_root + url,
+      url: _this.api_root + url,
       header: {
         'content-type': 'application/x-www-form-urlencoded',
       },
       method: 'POST',
-      data,
+      data: data,
       success(res) {
         if (res.statusCode !== 200 || typeof res.data !== 'object') {
-          App.showError('网络请求出错');
+          _this.showError('网络请求出错');
           return false;
         }
         if (res.data.code === -1) {
           // 登录态失效, 重新登录
-          App.doLogin(() => {
-            App._post_form(url, data, success, fail);
-          });
+          wx.hideNavigationBarLoading();
+          _this.doLogin(1);
           return false;
         } else if (res.data.code === 0) {
-          App.showError(res.data.msg, () => {
+          _this.showError(res.data.msg, () => {
             fail && fail(res);
           });
           return false;
@@ -213,13 +260,13 @@ App({
       },
       fail(res) {
         // console.log(res);
-        App.showError(res.errMsg, () => {
+        _this.showError(res.errMsg, () => {
           fail && fail(res);
         });
       },
       complete(res) {
-        wx.hideLoading();
         wx.hideNavigationBarLoading();
+        // wx.hideLoading();
         complete && complete(res);
       }
     });
@@ -234,51 +281,36 @@ App({
   },
 
   /**
-   * 对象转URL
+   * 小程序主动更新
    */
-  urlEncode(data) {
-    var _result = [];
-    for (var key in data) {
-      var value = data[key];
-      if (value.constructor == Array) {
-        value.forEach(_value => {
-          _result.push(key + "=" + _value);
-        });
-      } else {
-        _result.push(key + '=' + value);
-      }
+  updateManager() {
+    if (!wx.canIUse('getUpdateManager')) {
+      return false;
     }
-    return _result.join('&');
-  },
-
-  /**
-   * 设置当前页面标题
-   */
-  setTitle() {
-    let App = this,
-      wxapp;
-    if (wxapp = wx.getStorageSync('wxapp')) {
-      wx.setNavigationBarTitle({
-        title: wxapp.navbar.wxapp_title
+    const updateManager = wx.getUpdateManager();
+    updateManager.onCheckForUpdate(res => {
+      // 请求完新版本信息的回调
+      // console.log(res.hasUpdate)
+    });
+    updateManager.onUpdateReady(() => {
+      wx.showModal({
+        title: '更新提示',
+        content: '新版本已经准备好，即将重启应用',
+        showCancel: false,
+        success(res) {
+          if (res.confirm) {
+            // 新的版本已经下载好，调用 applyUpdate 应用新版本并重启
+            updateManager.applyUpdate()
+          }
+        }
       });
-    } else {
-      App.getWxappBase(() => {
-        App.setTitle();
-      });
-    }
-  },
-
-  /**
-   * 设置navbar标题、颜色
-   */
-  setNavigationBar() {
-    let App = this;
-    // 获取小程序基础信息
-    App.getWxappBase(wxapp => {
-      // 设置navbar标题、颜色
-      wx.setNavigationBarColor({
-        frontColor: wxapp.navbar.top_text_color.text,
-        backgroundColor: wxapp.navbar.top_background_color
+    });
+    updateManager.onUpdateFailed(() => {
+      // 新的版本下载失败
+      wx.showModal({
+        title: '更新提示',
+        content: '新版本下载失败',
+        showCancel: false
       })
     });
   },
@@ -288,6 +320,82 @@ App({
    */
   getTabBarLinks() {
     return tabBarLinks;
+  },
+
+  /**
+   * 跳转到指定页面
+   * 支持tabBar页面
+   */
+  navigationTo(url) {
+    if (!url || url.length == 0) {
+      return false;
+    }
+    let tabBarLinks = this.getTabBarLinks();
+    // tabBar页面
+    if (tabBarLinks.indexOf(url) > -1) {
+      wx.switchTab({
+        url: '/' + url
+      });
+    } else {
+      // 普通页面
+      wx.navigateTo({
+        url: '/' + url
+      });
+    }
+  },
+
+  /**
+   * 记录formId
+   * (因微信模板消息已下线，所以formId取消不再收集)
+   */
+  saveFormId(formId) {
+    return true;
+    // let _this = this;
+    // console.log('saveFormId');
+    // if (formId === 'the formId is a mock one') {
+    //   return false;
+    // }
+    // _this._post_form('wxapp.formId/save', {
+    //   formId: formId
+    // }, null, null, null, false);
+  },
+
+  /**
+   * 生成转发的url参数
+   */
+  getShareUrlParams(params) {
+    let _this = this;
+    return util.urlEncode(Object.assign({
+      referee_id: _this.getUserId()
+    }, params));
+  },
+
+  /**
+   * 发起微信支付
+   */
+  wxPayment(option) {
+    let options = Object.assign({
+      payment: {},
+      success: () => {},
+      fail: () => {},
+      complete: () => {},
+    }, option);
+    wx.requestPayment({
+      timeStamp: options.payment.timeStamp,
+      nonceStr: options.payment.nonceStr,
+      package: 'prepay_id=' + options.payment.prepay_id,
+      signType: 'MD5',
+      paySign: options.payment.paySign,
+      success(res) {
+        options.success(res);
+      },
+      fail(res) {
+        options.fail(res);
+      },
+      complete(res) {
+        options.complete(res);
+      }
+    });
   },
 
   /**
@@ -318,7 +426,8 @@ App({
           user_info: e.detail.rawData,
           encrypted_data: e.detail.encryptedData,
           iv: e.detail.iv,
-          signature: e.detail.signature
+          signature: e.detail.signature,
+          referee_id: wx.getStorageSync('referee_id')
         }, result => {
           // 记录token user_id
           wx.setStorageSync('token', result.data.token);

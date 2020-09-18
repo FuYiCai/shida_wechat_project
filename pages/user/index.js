@@ -7,8 +7,8 @@ Page({
    */
   data: {
     isLogin: false,
-    userInfo: {},
-    orderCount: {},
+    userInfo: {}, // 用户信息
+    orderCount: {}, // 订单数量
   },
 
   /**
@@ -26,10 +26,8 @@ Page({
     _this.setData({
       isLogin: App.checkIsLogin()
     });
-    if (_this.data.isLogin) {
-      // 获取当前用户信息
-      _this.getUserDetail();
-    }
+    // 获取当前用户信息
+    _this.getUserDetail();
   },
 
   /**
@@ -37,7 +35,7 @@ Page({
    */
   getUserDetail() {
     let _this = this;
-    App._get('user.index/detail', {}, result => {
+    App._get('user.index/detail', {}, function(result) {
       _this.setData(result.data);
     });
   },
@@ -50,11 +48,13 @@ Page({
     if (!_this.onCheckLogin()) {
       return false;
     }
+    // 记录formid
+    App.saveFormId(e.detail.formId);
     let urls = {
       all: '/pages/order/index?type=all',
       payment: '/pages/order/index?type=payment',
-      delivery: '/pages/order/index?type=delivery',
-      received: '/pages/order/index?type=received'
+      received: '/pages/order/index?type=received',
+      refund: '/pages/order/refund/index',
     };
     // 转跳指定的页面
     wx.navigateTo({
@@ -70,18 +70,51 @@ Page({
     if (!_this.onCheckLogin()) {
       return false;
     }
+    // 记录formId
+    App.saveFormId(e.detail.formId);
     wx.navigateTo({
       url: '/' + e.currentTarget.dataset.url
     })
   },
 
   /**
+   * 跳转我的钱包页面
+   */
+  onTargetWallet(e) {
+    let _this = this;
+    if (!_this.onCheckLogin()) {
+      return false;
+    }
+    // 记录formId
+    App.saveFormId(e.detail.formId);
+    wx.navigateTo({
+      url: './wallet/index'
+    })
+  },
+
+  /**
+   * 跳转积分明细页
+   */
+  onTargetPoints(e) {
+    let _this = this;
+    if (!_this.onCheckLogin()) {
+      return false;
+    }
+    // 记录formId
+    App.saveFormId(e.detail.formId);
+    wx.navigateTo({
+      url: '../points/log/index'
+    });
+  },
+
+  /**
    * 跳转到登录页
    */
   onLogin() {
-    wx.navigateTo({
-      url: '../login/login',
-    });
+    // wx.navigateTo({
+    //   url: '../login/login',
+    // });
+    App.doLogin();
   },
 
   /**
@@ -95,6 +128,5 @@ Page({
     }
     return true;
   },
-
 
 })

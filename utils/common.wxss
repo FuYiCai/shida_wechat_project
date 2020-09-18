@@ -142,6 +142,10 @@
   align-items: center;
 }
 
+.f-36 {
+  font-size: 36rpx;
+}
+
 .f-34 {
   font-size: 34rpx;
 }
@@ -263,6 +267,18 @@
   margin-top: 25rpx;
 }
 
+.m-top30 {
+  margin-top: 30rpx;
+}
+
+.m-l-10 {
+  margin-left: 10rpx;
+}
+
+.m-l-20 {
+  margin-left: 20rpx;
+}
+
 .p-bottom {
   padding-bottom: 112rpx;
 }
@@ -332,6 +348,7 @@
   font-size: unset;
   text-align: unset;
   overflow: visible;
+  color: inherit;
 }
 
 .btn-normal:after {
@@ -340,4 +357,9 @@
 
 .btn-normal.button-hover {
   color: inherit;
+}
+
+button:after {
+  content: none;
+  border: none;
 }

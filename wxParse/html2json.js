@@ -43,8 +43,8 @@ module.exports = {
                 if (d[e] ? l.tagType = "block" : c[e] ? l.tagType = "inline" : u[e] && (l.tagType = "closeSelf"),
                 0 !== t.length && (l.attr = t.reduce(function(e, t) {
                     var r = t.name, s = t.value;
-                    return "class" == r && (console.log(s), l.classStr = s), "style" == r && (console.log(s),
-                    l.styleStr = s), s.match(/ /) && (s = s.split(" ")), e[r] ? Array.isArray(e[r]) ? e[r].push(s) : e[r] = [ e[r], s ] : e[r] = s,
+                    return "class" == r && (l.classStr = s), "style" == r && (l.styleStr = s),
+                    s.match(/ /) && (s = s.split(" ")), e[r] ? Array.isArray(e[r]) ? e[r].push(s) : e[r] = [ e[r], s ] : e[r] = s,
                     e;
                 }, {})), "img" === l.tag) {
                     l.imgIndex = n.images.length;

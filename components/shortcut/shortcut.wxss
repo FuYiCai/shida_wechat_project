@@ -1,10 +1,10 @@
-@import "/utils/common.wxss";
+/* @import "/utils/common.wxss"; */
 
 /* 快捷导航 */
 
 .shortcut {
   position: fixed;
-  right: 12px;
+  right: 24rpx;
   bottom: 250rpx;
   width: 76rpx;
   line-height: 1;
@@ -29,7 +29,7 @@
   opacity: 0;
 }
 
-.nav-item text {
+.nav-item .iconfont {
   font-size: 40rpx;
 }
 

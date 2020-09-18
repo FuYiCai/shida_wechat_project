@@ -40,10 +40,10 @@ Page({
   saveData: function(e) {
     let _this = this,
       values = e.detail.value
-    values.region = _this.data.region;
+    values.region = this.data.region;
 
     // 记录formId
-    // App.saveFormId(e.detail.formId);
+    App.saveFormId(e.detail.formId);
 
     // 表单验证
     if (!_this.validation(values)) {
@@ -108,6 +108,23 @@ Page({
   bindRegionChange: function(e) {
     this.setData({
       region: e.detail.value
+    })
+  },
+
+  /**
+   * 获取微信地址
+   */
+  chooseAddress: function() {
+    let _this = this;
+    wx.chooseAddress({
+      success: function(res) {
+        _this.setData({
+          'detail.name': res.userName,
+          'detail.phone': res.telNumber,
+          'detail.detail': res.detailInfo,
+          region: [res.provinceName, res.cityName, res.countyName],
+        });
+      }
     })
   },
 
