@@ -8,6 +8,26 @@ Page({
   data: {
     order_id: null,
     order: {},
+    popupShow:false,
+    stepsActive:1,
+    steps: [
+      {
+        text: '步骤一',
+        desc: '描述信息',
+      },
+      {
+        text: '步骤二',
+        desc: '描述信息',
+      },
+      {
+        text: '步骤三',
+        desc: '描述信息',
+      },
+      {
+        text: '步骤四',
+        desc: '描述信息',
+      },
+    ],
   },
 
   /**
@@ -16,6 +36,7 @@ Page({
   onLoad: function (options) {
     this.data.order_id = options.order_id;
     this.getOrderDetail(options.order_id);
+    this.getLogistics(options.order_id)
   },
 
   /**
@@ -27,7 +48,18 @@ Page({
       _this.setData(result.data);
     });
   },
-
+  onClosepop(){
+    this.setData({ popupShow: false });
+  },
+  onpenPop() {
+    this.setData({ popupShow: true });
+  },
+  getLogistics(order_id){
+    console.log('order_id',order_id)
+    App._get('user.order/express',{order_id},(res)=>{
+      console.log(res)
+    })
+  },
   /**
    * 跳转到商品详情
    */

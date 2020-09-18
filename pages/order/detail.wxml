@@ -22,6 +22,7 @@
       </view>
       <view class="dis-flex flow-all-list-cont">
         <text class="col-7" selectable="{{true}}">快递单号: {{order.express_no}}</text>
+        <view bindtap="onpenPop" style="margin-left:auto">查看物流</view>
       </view>
     </view>
 
@@ -95,6 +96,19 @@
     </view>
 
   </scroll-view>
+<!-- 物流信息 -->
+<van-popup show="{{ popupShow }}" bind:close="onClosepop" closeable>
+ <view style="width:95vw" >
+   <van-steps
+    steps="{{ steps }}"
+    active="{{ stepsActive }}"
+    direction="vertical"
+    active-color="#ee0a24"
+  />
+ </view>
+</van-popup>
+
+
 
   <view class="flow-fixed-footer b-f">
     <view class="dis-flex chackout-box" wx:if="{{order.pay_status.value==10}}">

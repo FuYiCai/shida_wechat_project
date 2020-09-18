@@ -13,7 +13,7 @@
       <view wx:if="{{index  === 0}}" style="height:40rpx">  </view>
     </block>
     <!-- 商品推荐 -->
-    <!-- <view class="recommended-index-list m-top20">
+    <view class="recommended-index-list m-top20">
       <view class="title-header b-f t-c f-32 col-3">新品推荐</view>
     </view>
     <view class="index_sale ">
@@ -30,7 +30,7 @@
           </view>
         </navigator>
       </scroll-view>
-    </view> -->
+    </view>
 
     <!-- 猜您喜欢 -->
     <view class="title-hrbg" style="margin-top:10rpx">

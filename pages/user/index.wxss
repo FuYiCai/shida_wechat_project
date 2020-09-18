@@ -122,3 +122,8 @@
   color: #444;
   margin-left: 20rpx;
 }
+
+.logo{
+  display: flex;
+  justify-content: center;
+}

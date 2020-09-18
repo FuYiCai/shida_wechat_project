@@ -111,4 +111,7 @@
       </button>
     </form>
   </view>
+  <view class="logo">
+    <image src="/images/wlogo.png" mode="aspectFit" style="height: 62px;margin-top:50rpx"></image>
+  </view>
 </view>
