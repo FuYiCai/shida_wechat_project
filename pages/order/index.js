@@ -141,8 +141,13 @@ Page({
     _this.setData({
       payOrderId: e.currentTarget.dataset.id
     });
+    // 改写支付方式
+    _this.payment(_this.data.payOrderId, PayTypeEnum.WECHAT.value);
+
+
+
     // 显示支付方式弹窗
-    _this.onTogglePayPopup();
+    // _this.onTogglePayPopup();
   },
 
   /**
