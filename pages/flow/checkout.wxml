@@ -1,11 +1,11 @@
 <view class="container p-bottom" wx:if="{{ goods_list.length }}">
 
   <!-- 顶部选项卡 -->
-  <!-- <view wx:if="{{ isShowTab }}" class="swiper-tab dis-flex flex-y-center flex-x-around">
+  <view wx:if="{{ isShowTab }}" class="swiper-tab dis-flex flex-y-center flex-x-around">
     <view wx:for="{{ DeliveryTypeEnum }}" wx:key="this" class="swiper-tab-item {{ curDelivery == item.value ? 'on' : '' }}" data-current="{{ item.value }}" catchtap="onSwichDelivery">
       {{ item.name }}
     </view>
-  </view> -->
+  </view>
 
   <!-- 快递配送：配送地址 -->
   <view wx:if="{{ curDelivery == DeliveryTypeEnum.EXPRESS.value }}" catchtap="onSelectAddress" class="flow-delivery">
@@ -129,7 +129,7 @@
       </view>
     </view>
     <!-- 优惠券 -->
-    <view class="flow-all-list dis-flex">
+    <!-- <view class="flow-all-list dis-flex">
       <text class="flex-five">优惠券：</text>
       <view class="flex-five t-r">
         <view catchtap="onTogglePopupCoupon">
@@ -141,7 +141,7 @@
           <text wx:else class="">无优惠券可用</text>
         </view>
       </view>
-    </view>
+    </view> -->
     <!-- 积分抵扣 -->
     <view wx:if="{{ is_allow_points }}" class="points flow-all-list dis-flex flex-y-center">
       <view class="block-left flex-five">
