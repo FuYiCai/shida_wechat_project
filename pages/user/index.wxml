@@ -83,7 +83,7 @@
     </view>
   </view>
   <!-- 我的钱包 -->
-  <view class="my-asset dis-flex">
+  <!-- <view class="my-asset dis-flex">
     <view class="asset-left flex-box dis-flex flex-x-center">
       <view class="asset-left_item">
         <form bindsubmit="onTargetWallet" report-submit="true">
@@ -124,7 +124,7 @@
         </form>
       </view>
     </view>
-  </view>
+  </view> -->
   <!-- 菜单列表 -->
   <view class="menus-list">
     <form wx:for="{{ menus }}" wx:key="this" bindsubmit="onTargetMenus" data-url="{{item.url}}" report-submit="true">
@@ -141,4 +141,7 @@
       </button>
     </form>
   </view>
+</view>
+<view class="logo">
+    <image src="/images/wlogo.png" mode="aspectFit" style="height: 62px;margin-top:50rpx"></image>
 </view>

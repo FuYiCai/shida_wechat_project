@@ -201,3 +201,7 @@
 .asset-left_item .item-name text {
   font-size: 25rpx;
 }
+.logo{
+  display: flex;
+  justify-content: center;
+}
