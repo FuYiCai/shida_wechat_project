@@ -82,7 +82,7 @@
       </view>
     </view>
   </view>
-  <!-- 我的钱包 -->
+  <!-- 我的钱包 --> 
   <!-- <view class="my-asset dis-flex">
     <view class="asset-left flex-box dis-flex flex-x-center">
       <view class="asset-left_item">

@@ -288,7 +288,7 @@ Page({
     }, (result) => {
       // 设置二维码图片路径
       _this.setData({
-        QRCodeImage: result.data.qrcode
+        QRCodeImage: result.data.qrcode.code
       });
       // 显示核销二维码
       _this.onToggleQRCodePopup();

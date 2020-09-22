@@ -54,6 +54,11 @@
           </view>
         </view>
       </view>
+      <view class="col-6" style="padding:20rpx">
+        <text space="ensp">联 系 人：{{order.extract.linkman}} </text>
+        <view style="margin:10rpx 0"> 联系电话：{{order.extract.phone}} </view>
+        <text space="ensp" user-select >核 销 码：{{order.extract.code}}</text>
+      </view>
     </view>
 
     <!-- 物流信息 -->

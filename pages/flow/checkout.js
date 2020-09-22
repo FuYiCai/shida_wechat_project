@@ -111,7 +111,7 @@ Page({
       }
 
       let data = {};
-      // 当前选择的配送方式
+      // 当前选择的配送方式；
       data.curDelivery = resData.delivery;
       // 如果只有一种配送方式则不显示选项卡
       data.isShowTab = resData.setting.delivery.length > 1;

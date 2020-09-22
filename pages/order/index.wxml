@@ -122,10 +122,12 @@
   <zan-popup show="{{ showQRCodePopup }}" bindclose="onToggleQRCodePopup">
     <view class="pop-qrcode pop-example__container">
       <view class="pop-title">
-        <text class="f-30">核销二维码</text>
+        <!-- <text class="f-30">核销二维码</text> -->
+        <text class="f-30">核销码</text>
       </view>
-      <view class="pop-content">
-        <image src="{{ QRCodeImage }}"></image>
+      <view class="pop-content" style="text-align:center">
+        <!-- <image src="{{ QRCodeImage }}"></image> -->
+        {{QRCodeImage}}
       </view>
     </view>
   </zan-popup>

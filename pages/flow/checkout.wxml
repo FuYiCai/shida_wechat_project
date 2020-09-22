@@ -66,7 +66,7 @@
     <view class="flow-extract-contact m-top20 b-f">
       <view class="contact-item dis-flex">
         <view class="item_label dis-flex flex-x-end flex-y-center">
-          <text>联系人：</text>
+          <text >联系人：</text>
         </view>
         <view class="item_ipt flex-box dis-flex flex-y-center">
           <input placeholder="请填写联系人姓名" bindinput="onInputLinkman" value="{{ linkman }}"></input>
