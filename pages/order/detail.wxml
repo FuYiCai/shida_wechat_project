@@ -113,9 +113,9 @@
             <text class="flow-cont {{ item.is_user_grade ? 'price-delete' : '' }}">￥{{item.goods_price}}</text>
           </view>
           <!-- 会员折扣价 -->
-          <view wx:if="{{ item.is_user_grade }}" class="grade-price">
+          <!-- <view wx:if="{{ item.is_user_grade }}" class="grade-price">
             <text>会员折扣价：￥{{ item.grade_goods_price }}</text>
-          </view>
+          </view> -->
           <!-- 申请售后 -->
           <view class="m-top20 dis-flex flex-x-end">
             <text wx:if="{{ item.refund }}" class="f-26 col-7">已申请售后</text>

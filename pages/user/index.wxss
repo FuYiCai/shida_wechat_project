@@ -202,6 +202,13 @@
   font-size: 25rpx;
 }
 .logo{
+
   display: flex;
   justify-content: center;
+}
+page{
+  display: flex;
+  min-height: 100%;
+  flex-direction: column;
+  justify-content: space-between;
 }
